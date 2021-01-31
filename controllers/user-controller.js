@@ -56,36 +56,7 @@ module.exports = {
 
 
     async create(req, res) {
-        let userInfo = req.body;
 
-        if (userDataValidator(userInfo)) {
-            let userWithEmail =  await userModel.findOne({ email: userInfo.email });
-            let userWithUsername =  await userModel.findOne({ username: userInfo.username });
-
-            if(userWithEmail) {
-                res.json({
-                    success: false,
-                    message: "Email is duplicated!"
-                });
-            } else if(userWithUsername){
-                res.json({
-                    success: false,
-                    message: "Username is duplicated!"
-                });
-            } else {
-                let user = await userModel.create(userInfo);
-                res.json({
-                    success: true,
-                    user: user
-                });
-            }
-
-        } else {
-            res.json({
-                success: false,
-                message: "There is something wrong with the body."
-            });
-        }
     },
 
 
