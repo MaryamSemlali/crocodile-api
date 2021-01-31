@@ -55,22 +55,31 @@ module.exports = {
     },
 
 
-    create(req, res) {
-        if (userDataValidator(req.body)) {
-            delete req.body.archived;
+    async create(req, res) {
+        let userInfo = req.body;
 
-            userModel.create(req.body).then((response) => {
-                res.json({
-                    success: true,
-                    user: response
-                });
+        if (userDataValidator(userInfo)) {
+            let userWithEmail =  await userModel.findOne({ email: userInfo.email });
+            let userWithUsername =  await userModel.findOne({ username: userInfo.username });
 
-            }).catch((error) => {
+            if(userWithEmail) {
                 res.json({
                     success: false,
-                    message: error
+                    message: "Email is duplicated!"
                 });
-            });
+            } else if(userWithUsername){
+                res.json({
+                    success: false,
+                    message: "Username is duplicated!"
+                });
+            } else {
+                let user = await userModel.create(userInfo);
+                res.json({
+                    success: true,
+                    user: user
+                });
+            }
+
         } else {
             res.json({
                 success: false,
