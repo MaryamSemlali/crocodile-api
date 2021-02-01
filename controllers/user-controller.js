@@ -54,9 +54,88 @@ module.exports = {
             });
     },
 
+    create2(req, res) {
+        let userInfo = req.body;
+
+        if(userDataValidator(userInfo)) {
+            userModel.findOne({ email: userInfo.email }).then((userWithEmail) => {
+                if(userWithEmail) {
+                    res.send({
+                        success: false,
+                        message: 'Email duplicated'
+                    });
+                }
+            }).catch(() => {
+                res.send({
+                    success: false,
+                    message: ''
+                });
+            })
+            userModel.findOne({ username: userInfo.username }).then((userWithUsername) => {
+                if(userWithUsername) {
+                    res.send({
+                        success: false,
+                        message: 'Username duplicated'
+                    });
+                } else {
+                    userModel.create(userInfo).then((user) => {
+                        res.send({
+                            success: true,
+                            user: user
+                        });
+                    }).catch(() => {
+                        res.send({
+                            success: false,
+                            message: 'the user was not created'
+                        });
+                    })
+
+                }
+            }).catch(() => {
+                res.send({
+                    success: false,
+                    message: 'error'
+                });
+            })
+
+        } else {
+            res.send({
+                success: false,
+                message: 'something wrong with the body'
+            });
+        }
+    },
 
     async create(req, res) {
+        let userInfo = req.body;
 
+        if(userDataValidator(userInfo)) {
+            let userWithEmail = await userModel.findOne({ email: userInfo.email })
+            let userWithUsername = await userModel.findOne({ username: userInfo.username })
+
+            if(userWithEmail) {
+                res.send({
+                    success: false,
+                    message: 'Email duplicated'
+                });
+            } else if (userWithUsername) {
+                res.send({
+                    success: false,
+                    message: 'Username duplicated'
+                });
+            } else {
+                let user = await userModel.create(userInfo)
+                res.send({
+                    success: true,
+                    user: user
+                });
+            }
+        } else {
+            res.send({
+                success: false,
+                message: 'something wrong with the body'
+            });
+        }
     },
 
 

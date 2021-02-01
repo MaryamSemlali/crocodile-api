@@ -10,7 +10,7 @@ module.exports = (server) => {
 
     server.get('/users/:id', userController.read);
 
-    server.post('/users', userController.create);
+    server.post('/users', userController.create2);
 
     server.delete('/users/:id', userController.delete);
 
